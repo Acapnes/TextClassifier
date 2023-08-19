@@ -5,20 +5,20 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
 from sklearn.metrics import confusion_matrix, classification_report
 
-# Eğitim setini oluşturmak için gerekli olan dosyaları oku
-spor = pd.read_csv('./spor.txt', header=None, names=['text'], sep='\t', quoting=3)
-ekonomi = pd.read_csv('./ekonomi.txt', header=None, names=['text'], sep='\t', quoting=3)
-teknoloji = pd.read_csv('./teknoloji.txt', header=None, names=['text'], sep='\t', quoting=3)
+# Read the necessary files for create education set
+sport = pd.read_csv('./sport.txt', header=None, names=['text'], sep='\t', quoting=3)
+economy = pd.read_csv('./economy.txt', header=None, names=['text'], sep='\t', quoting=3)
+technology = pd.read_csv('./technology.txt', header=None, names=['text'], sep='\t', quoting=3)
 
-# Eğitim setini oluştur
-train_set = pd.concat([spor, ekonomi, teknoloji])
-# train_set['label'] = ['spor'] * len(spor) + ['ekonomi'] * len(ekonomi) + ['teknoloji'] * len(teknoloji)
-train_set['label'] = ['spor'] * len(spor) + ['ekonomi'] * len(ekonomi) + ['teknoloji'] * len(teknoloji)
+# Create education set
+train_set = pd.concat([sport, economy, technology])
+# train_set['label'] = ['sport'] * len(sport) + ['economy'] * len(economy) + ['technology'] * len(technology)
+train_set['label'] = ['sport'] * len(sport) + ['economy'] * len(economy) + ['technology'] * len(technology)
 
-# Test setini oku
+# Read test set
 test_set = pd.read_csv('./test.txt', header=None, names=['text'], sep='\t', quoting=3)
 
-# Naive Bayes sınıflandırıcısını oluştur ve eğit
+# Create Naive Bayes classifier and educate
 nb_pipeline = Pipeline([
     ('vectorizer', CountVectorizer()),
     ('classifier', MultinomialNB())
@@ -27,7 +27,7 @@ nb_pipeline = Pipeline([
 nb_pipeline.fit(train_set['text'], train_set['label'])
 nb_predictions = nb_pipeline.predict(test_set['text'])
 
-# SVM sınıflandırıcısını kullanarak eğitim setini kullanarak sınıflandırma yapın
+# Classify by using SVM and Education set
 svm_pipeline = Pipeline([
     ('vectorizer', CountVectorizer()),
     ('classifier', LinearSVC())
@@ -36,17 +36,17 @@ svm_pipeline = Pipeline([
 svm_pipeline.fit(train_set['text'], train_set['label'])
 svm_predictions = svm_pipeline.predict(test_set['text'])
 
-# Sınıflandırıcıların performansını karşılaştırın
+# Compate classifiers performance 
 
 test_set['label'] = nb_predictions
 
-# Naive Bayes'in performansını ölçün
+# Measure Naive Bayes performance
 print('Naive Bayes:')
 print(nb_predictions)
 print(confusion_matrix(test_set['label'], nb_predictions))
 print(classification_report(test_set['label'], nb_predictions, zero_division=True))
 
-# SVM'nin performansını ölçün
+# Measure SVM'nin performance
 print('SVM:')
 svm_predictions = svm_pipeline.predict(test_set['text'])
 print(svm_predictions)
